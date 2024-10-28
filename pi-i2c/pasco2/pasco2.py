@@ -5,7 +5,7 @@ import time
 import sys
 PASCO_ADDR = 0x28
 MUX_ADDR = 0x70
-channels = [4,5,6,7]
+channels = [5,7]
 
 
 bus = smbus.SMBus(1)

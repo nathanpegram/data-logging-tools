@@ -6,8 +6,7 @@ import sys
 PASCO_ADDR = 0x28
 MUX_ADDR = 0x70
 
-#channels = [4,5,6,7]
-channels = [5]
+channels = [5,7]
 #registers
 DEV_ID = 0x00
 SENS_STS = 0x01
@@ -64,8 +63,8 @@ def end_forced_calibration():
 
 def initiate_single_shot():
     bus.write_i2c_block_data(PASCO_ADDR, MEAS_CFG, [0x01])
-
 def read_measurement():
+    count = 0
     while(True):
         try:
             measurement_status = bus.read_i2c_block_data(PASCO_ADDR, MEAS_STS, 1)
@@ -77,11 +76,14 @@ def read_measurement():
                 sys.stderr.write("%d ppm\r\n" % co2_concentration) 
                 return co2_concentration
             else:
-                sys.stderr.write('waiting\r\n')
+                sys.stderr.write('waiting' + "."*count)
         except Exception as e:
             sys.stderr.write(str(e))
             pass
         time.sleep(0.2)
+        count = count + 1
+        count = count % 4
+    sys.stderr.write('\r\n')
 
 for channel in channels:
     print("start calibration on channel %d" % channel)
@@ -93,7 +95,7 @@ for channel in channels:
 for i in range(3):
     results = {}
     for channel in channels:
-        print("read %d of 3 on channel %d" % (i+1, channel))
+        print("reading %d of 3 on channel %d" % (i+1, channel))
         bus.write_byte(MUX_ADDR, 1<<channel)
         time.sleep(0.2)
         results[channel] = read_measurement()
