@@ -2,6 +2,10 @@
 import smbus
 import time
 
+
+MUX_ADDR = 0x70
+channels = [5,7]
+
 # Constants
 AHT20_DEFAULT_ADDRESS = 0x38
 sfe_aht20_reg_initialize = 0xBE
@@ -155,13 +159,24 @@ class AHT20:
 # Main testing section
 if __name__ == "__main__":
     sensor = AHT20()
+    fields = []
 
-    if sensor.begin():
-        
-        # Get temperature and humidity
-        temperature = sensor.getTemperature()
-        humidity = sensor.getHumidity()
+    for channel in channels:
+        bus.write_byte(MUX_ADDR, 1<<channel)
+        #time.sleep(0.05)
+        sensor.begin()
+        time.sleep(0.2)
 
-        # Prepare the InfluxDB line protocol output
-        print("weathering temperature={:.2f},humidity={:.2f}".format(temperature, humidity))
+    results = {}
+    for channel in channels:
+        bus.write_byte(MUX_ADDR, 1<<channel)
+        time.sleep(0.2)
+        fields += "temperature_{channel}={value}".format(channel=channel, value=sensor.getTemperature())
+        fields += "humdity_{channel}={value}".format(channel=channel, value=sensor.getHumidity())
+        time.sleep(0.2)
+
+fields = ",".join(fields)
+print( "weathering " + fields)
+
+
 
