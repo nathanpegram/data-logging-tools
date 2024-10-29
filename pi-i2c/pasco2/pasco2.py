@@ -13,6 +13,7 @@ except Exception as e:
     print("failed to parse channels argument")
     sys.exit()
 
+time.sleep(0.2)
 
 bus = smbus.SMBus(1)
 
