@@ -177,7 +177,7 @@ if __name__ == "__main__":
         time.sleep(0.2)
 
 fields = ",".join(fields)
-print( "weathering " + fields)
+print( "weathering2 " + fields)
 
 
 

@@ -59,4 +59,4 @@ for channel in channels:
 
 sys.stderr.write(str(results) + '\r\n')
 fields = ",".join([f"co2_{k}={v}" for k, v in results.items()])
-print( "weathering " + fields)
+print( "weathering2 " + fields)
