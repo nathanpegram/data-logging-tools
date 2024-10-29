@@ -172,8 +172,8 @@ if __name__ == "__main__":
     for channel in channels:
         bus.write_byte(MUX_ADDR, 1<<channel)
         time.sleep(0.2)
-        fields += "temperature_{channel}={value}".format(channel=channel, value=sensor.getTemperature())
-        fields += "humdity_{channel}={value}".format(channel=channel, value=sensor.getHumidity())
+        fields.append("temperature_{channel}={value}".format(channel=channel, value=sensor.getTemperature()))
+        fields.append("humdity_{channel}={value}".format(channel=channel, value=sensor.getHumidity()))
         time.sleep(0.2)
 
 fields = ",".join(fields)
