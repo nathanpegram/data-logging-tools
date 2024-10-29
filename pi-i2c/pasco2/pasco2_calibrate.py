@@ -6,7 +6,18 @@ import sys
 PASCO_ADDR = 0x28
 MUX_ADDR = 0x70
 
-channels = [5,7]
+if len(sys.argv < 3):
+    print("usage: pasco_calibrate.py channels reference_ppm")
+    print("example: pasco_calibrate.py 57 400 for channels 5 and 7 and 400ppm")
+    sys.exit()
+
+try:
+    channels = sys.argv[1]
+    channels = [int(digit) for digit in channels]
+except Exception as e:
+    print("failed to parse channels argument")
+    sys.exit()
+
 #registers
 DEV_ID = 0x00
 SENS_STS = 0x01
@@ -28,9 +39,10 @@ SENS_RST = 0x10
 bus = smbus.SMBus(1)
 
 try:
-    reference_ppm = int(sys.argv[1])
+    reference_ppm = int(sys.argv[2])
 except:
-    reference_ppm = 400
+    print("failed to parse reference ppm")
+    sys.exit()
 
 def read_info():
     #read id

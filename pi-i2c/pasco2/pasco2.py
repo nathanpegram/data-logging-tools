@@ -5,7 +5,13 @@ import time
 import sys
 PASCO_ADDR = 0x28
 MUX_ADDR = 0x70
-channels = [5,7]
+
+try:
+    channels = sys.argv[1]
+    channels = [int(digit) for digit in channels]
+except Exception as e:
+    print("failed to parse channels argument")
+    sys.exit()
 
 
 bus = smbus.SMBus(1)
