@@ -13,9 +13,9 @@ sfe_aht20_reg_measure = 0xAC
 sfe_aht20_reg_reset = 0xBA
 
 class AHT20:
-    def __init__(self, i2c_bus=1):
+    def __init__(self, i2c_bus):
         self._deviceAddress = AHT20_DEFAULT_ADDRESS
-        self.bus = smbus.SMBus(i2c_bus)
+        self.bus = i2c_bus
         self.sensorData = {'temperature': 0, 'humidity': 0}
         self.sensorQueried = {'temperature': True, 'humidity': True}
         self.measurementStarted = False
@@ -158,7 +158,8 @@ class AHT20:
 
 # Main testing section
 if __name__ == "__main__":
-    sensor = AHT20()
+    bus = smbus.SMBus(1)
+    sensor = AHT20(bus)
     fields = []
 
     for channel in channels:
