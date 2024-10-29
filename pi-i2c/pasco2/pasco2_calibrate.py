@@ -6,7 +6,7 @@ import sys
 PASCO_ADDR = 0x28
 MUX_ADDR = 0x70
 
-if len(sys.argv < 3):
+if len(sys.argv) < 3:
     print("usage: pasco_calibrate.py channels reference_ppm")
     print("example: pasco_calibrate.py 57 400 for channels 5 and 7 and 400ppm")
     sys.exit()
