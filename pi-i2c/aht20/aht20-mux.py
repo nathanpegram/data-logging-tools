@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import smbus
 import time
+import sys
 
 
 MUX_ADDR = 0x70
