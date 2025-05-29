@@ -1,0 +1,510 @@
+Try AI directly in your favorite apps … 
+Use Gemini to generate drafts and refine content, plus get Gemini Pro with access to Google's next-gen AI for $19.99 $0 for 1 month
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Status Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .refresh-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            flex: 1 1 250px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .data-label {
+            color: #7f8c8d;
+        }
+        .data-value {
+            font-weight: bold;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-on {
+            background-color: #2ecc71;
+        }
+        .status-off {
+            background-color: #e74c3c;
+        }
+        .refresh-time {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Device Status Dashboard</h1>
+        <button class="refresh-button" onclick="fetchData()">Refresh Data</button>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <div id="dashboard-content">
+            <!-- Overview Section -->
+            <div class="section">
+                <h2 class="section-title">Overview</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">System Status</div>
+                        <div class="data-row">
+                            <span class="data-label">Power Button:</span>
+                            <span id="power-button-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">App Status:</span>
+                            <span id="app-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">WiFi Signal:</span>
+                            <span id="wifi-signal" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Battery Section -->
+            <div class="section">
+                <h2 class="section-title">Battery</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">Battery Status</div>
+                        <div class="data-row">
+                            <span class="data-label">State of Charge:</span>
+                            <span id="battery-soc" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Voltage:</span>
+                            <span id="battery-voltage" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current:</span>
+                            <span id="battery-current" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Wh Remaining:</span>
+                            <span id="battery-wh-remaining" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Temperature:</span>
+                            <span id="battery-temp" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Cycles:</span>
+                            <span id="battery-cycles" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Time Remaining:</span>
+                            <span id="battery-ttef" class="data-value">-</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Energy Stats</div>
+                        <div class="data-row">
+                            <span class="data-label">Power Net:</span>
+                            <span id="battery-power-net" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power Net Avg:</span>
+                            <span id="battery-power-net-avg" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Energy In:</span>
+                            <span id="battery-wh-in" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Energy Out:</span>
+                            <span id="battery-wh-out" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ports Section -->
+            <div class="section">
+                <h2 class="section-title">Ports</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">AC Output</div>
+                        <div class="data-row">
+                            <span class="data-label">Status:</span>
+                            <span id="ac-out-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Voltage:</span>
+                            <span id="ac-out-voltage" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current:</span>
+                            <span id="ac-out-current" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power:</span>
+                            <span id="ac-out-power" class="data-value">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">12V Output</div>
+                        <div class="data-row">
+                            <span class="data-label">Status:</span>
+                            <span id="v12-out-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power:</span>
+                            <span id="v12-out-power" class="data-value">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">USB Output</div>
+                        <div class="data-row">
+                            <span class="data-label">Status:</span>
+                            <span id="usb-out-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power:</span>
+                            <span id="usb-out-power" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cards-container" style="margin-top: 20px;">
+                    <div class="card">
+                        <div class="card-title">AC Input</div>
+                        <div class="data-row">
+                            <span class="data-label">Status:</span>
+                            <span id="ac-in-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Voltage:</span>
+                            <span id="ac-in-voltage" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current:</span>
+                            <span id="ac-in-current" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power:</span>
+                            <span id="ac-in-power" class="data-value">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">LV DC Input</div>
+                        <div class="data-row">
+                            <span class="data-label">Status:</span>
+                            <span id="lvdc-in-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Voltage:</span>
+                            <span id="lvdc-in-voltage" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current:</span>
+                            <span id="lvdc-in-current" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power:</span>
+                            <span id="lvdc-in-power" class="data-value">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">HV DC Input</div>
+                        <div class="data-row">
+                            <span class="data-label">Status:</span>
+                            <span id="hvdc-in-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Voltage:</span>
+                            <span id="hvdc-in-voltage" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current:</span>
+                            <span id="hvdc-in-current" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power:</span>
+                            <span id="hvdc-in-power" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Info -->
+            <div class="section">
+                <h2 class="section-title">Additional Information</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">Inverter</div>
+                        <div class="data-row">
+                            <span class="data-label">Temperature:</span>
+                            <span id="inverter-temp" class="data-value">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">XNodes</div>
+                        <div id="xnodes-content">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="refresh-time">Last updated: <span id="last-updated">Never</span></div>
+    </div>
+
+    <script>
+        // URL for the status endpoint
+        const statusEndpoint = 'http://192.168.8.234/status';
+        
+        // Function to fetch data from the endpoint
+        async function fetchData() {
+            try {
+                const response = await fetch(statusEndpoint);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                updateDashboard(data);
+                
+                // Hide any previous error message
+                document.getElementById('error-message').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                
+                // Update the last updated time
+                const now = new Date();
+                document.getElementById('last-updated').textContent = now.toLocaleString();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('error-message').textContent = `Failed to fetch data: ${error.message}`;
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }
+        
+        // Function to update the dashboard with the fetched data
+        function updateDashboard(data) {
+            // Update Overview section
+            document.getElementById('power-button-status').innerHTML = getStatusIndicator(data.btn.pwr) + (data.btn.pwr ? 'ON' : 'OFF');
+            document.getElementById('app-status').innerHTML = getStatusIndicator(data.appOn) + (data.appOn ? 'Running' : 'Not Running');
+            document.getElementById('wifi-signal').textContent = `${data.wifiRssi} dBm`;
+            
+            // Update Battery section
+            document.getElementById('battery-soc').textContent = `${data.batt.soc}%`;
+            document.getElementById('battery-voltage').textContent = `${data.batt.v.toFixed(1)} V`;
+            document.getElementById('battery-current').textContent = `${data.batt.aNet.toFixed(1)} A`;
+            document.getElementById('battery-wh-remaining').textContent = `${data.batt.whRem} Wh`;
+            document.getElementById('battery-temp').textContent = `${data.batt.cTmp}°C`;
+            document.getElementById('battery-cycles').textContent = data.batt.cyc;
+            
+            // Format time to empty/full - mTtef is in minutes
+            const ttef = data.batt.mTtef;
+            const absMinutes = Math.abs(ttef);
+            const hours = Math.floor(absMinutes / 60);
+            const minutes = absMinutes % 60;
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            
+            if (ttef > 0) {
+                // Positive values indicate charging
+                document.getElementById('battery-ttef').textContent = `${timeString} to full`;
+            } else if (ttef < 0) {
+                // Negative values indicate discharging
+                document.getElementById('battery-ttef').textContent = `${timeString} to empty`;
+            } else {
+                // Zero might indicate fully charged or unknown
+                document.getElementById('battery-ttef').textContent = `--:-- (unknown)`;
+            }
+            
+            document.getElementById('battery-power-net').textContent = `${data.batt.WNet} W`;
+            document.getElementById('battery-power-net-avg').textContent = `${data.batt.WNetAvg} W`;
+            document.getElementById('battery-wh-in').textContent = `${data.batt.whIn} Wh`;
+            document.getElementById('battery-wh-out').textContent = `${data.batt.whOut} Wh`;
+            
+            // Update Ports section - AC Output
+            document.getElementById('ac-out-status').innerHTML = getStatusIndicator(data.ports.acOut.s) + getPortStatusText(data.ports.acOut.s);
+            document.getElementById('ac-out-voltage').textContent = `${data.ports.acOut.v.toFixed(1)} V`;
+            document.getElementById('ac-out-current').textContent = `${data.ports.acOut.a.toFixed(1)} A`;
+            document.getElementById('ac-out-power').textContent = `${data.ports.acOut.w} W`;
+            
+            // 12V Output
+            document.getElementById('v12-out-status').innerHTML = getStatusIndicator(data.ports.v12Out.s) + getPortStatusText(data.ports.v12Out.s);
+            document.getElementById('v12-out-power').textContent = `${data.ports.v12Out.w} W`;
+            
+            // USB Output
+            document.getElementById('usb-out-status').innerHTML = getStatusIndicator(data.ports.usbOut.s) + getPortStatusText(data.ports.usbOut.s);
+            document.getElementById('usb-out-power').textContent = `${data.ports.usbOut.w} W`;
+            
+            // AC Input
+            document.getElementById('ac-in-status').innerHTML = getStatusIndicator(data.ports.acIn.s) + getPortStatusText(data.ports.acIn.s);
+            document.getElementById('ac-in-voltage').textContent = `${data.ports.acIn.v.toFixed(1)} V`;
+            document.getElementById('ac-in-current').textContent = `${data.ports.acIn.a.toFixed(1)} A`;
+            document.getElementById('ac-in-power').textContent = `${data.ports.acIn.w} W`;
+            
+            // LV DC Input
+            document.getElementById('lvdc-in-status').innerHTML = getStatusIndicator(data.ports.lvDcIn.s) + getPortStatusText(data.ports.lvDcIn.s);
+            document.getElementById('lvdc-in-voltage').textContent = `${data.ports.lvDcIn.v.toFixed(1)} V`;
+            document.getElementById('lvdc-in-current').textContent = `${data.ports.lvDcIn.a.toFixed(1)} A`;
+            document.getElementById('lvdc-in-power').textContent = `${data.ports.lvDcIn.w} W`;
+            
+            // HV DC Input
+            document.getElementById('hvdc-in-status').innerHTML = getStatusIndicator(data.ports.hvDcIn.s) + getPortStatusText(data.ports.hvDcIn.s);
+            document.getElementById('hvdc-in-voltage').textContent = `${data.ports.hvDcIn.v.toFixed(1)} V`;
+            document.getElementById('hvdc-in-current').textContent = `${data.ports.hvDcIn.a.toFixed(1)} A`;
+            document.getElementById('hvdc-in-power').textContent = `${data.ports.hvDcIn.w} W`;
+            
+            // Update Inverter temperature
+            document.getElementById('inverter-temp').textContent = `${data.inv.cTmp}°C`;
+            
+            // Update XNodes
+            updateXNodes(data.xNodes);
+        }
+        
+        // Helper function to get status indicator HTML
+        function getStatusIndicator(status) {
+            const statusClass = status ? 'status-on' : 'status-off';
+            return `<span class="status-indicator ${statusClass}"></span>`;
+        }
+        
+        // Helper function to get port status text
+        function getPortStatusText(status) {
+            // For ports, status values might have different meanings
+            // This is a simplified interpretation - adjust based on your device's documentation
+            if (status === 0) return 'Inactive';
+            if (status === 1) return 'Active';
+            if (status === 4) return 'Active'; // 12V port specific
+            return `Status: ${status}`;
+        }
+        
+        // Function to update XNodes section
+        function updateXNodes(xNodes) {
+            const xNodesContainer = document.getElementById('xnodes-content');
+            xNodesContainer.innerHTML = '';
+            
+            for (const [nodeId, nodeData] of Object.entries(xNodes)) {
+                const nodeDiv = document.createElement('div');
+                
+                // Add node status
+                const statusRow = document.createElement('div');
+                statusRow.className = 'data-row';
+                statusRow.innerHTML = `
+                    <span class="data-label">${nodeId}:</span>
+                    <span class="data-value">${getStatusIndicator(nodeData.s)}${nodeData.s ? 'Connected' : 'Disconnected'}</span>
+                `;
+                nodeDiv.appendChild(statusRow);
+                
+                // Add relays status if present
+                if (nodeData.r1) {
+                    const relay1Row = document.createElement('div');
+                    relay1Row.className = 'data-row';
+                    relay1Row.innerHTML = `
+                        <span class="data-label">Relay 1:</span>
+                        <span class="data-value">${getStatusIndicator(nodeData.r1.s)}${nodeData.r1.s ? 'ON' : 'OFF'}</span>
+                    `;
+                    nodeDiv.appendChild(relay1Row);
+                }
+                
+                if (nodeData.r2) {
+                    const relay2Row = document.createElement('div');
+                    relay2Row.className = 'data-row';
+                    relay2Row.innerHTML = `
+                        <span class="data-label">Relay 2:</span>
+                        <span class="data-value">${getStatusIndicator(nodeData.r2.s)}${nodeData.r2.s ? 'ON' : 'OFF'}</span>
+                    `;
+                    nodeDiv.appendChild(relay2Row);
+                }
+                
+                xNodesContainer.appendChild(nodeDiv);
+            }
+        }
+        
+        // Fetch data when page loads
+        document.addEventListener('DOMContentLoaded', fetchData);
+        
+        // Set up auto-refresh every 30 seconds
+        setInterval(fetchData, 30000);
+    </script>
+</body>
+</html>
+
