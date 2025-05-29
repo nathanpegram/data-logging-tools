@@ -1,0 +1,369 @@
+Try AI directly in your favorite apps … 
+Use Gemini to generate drafts and refine content, plus get Gemini Pro with access to Google's next-gen AI for $19.99 $0 for 1 month
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeti Battery Status Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .refresh-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            flex: 1 1 250px;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .data-label {
+            color: #7f8c8d;
+        }
+        .data-value {
+            font-weight: bold;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-on {
+            background-color: #2ecc71;
+        }
+        .status-off {
+            background-color: #e74c3c;
+        }
+        .refresh-time {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Yeti Battery Status Dashboard</h1>
+        <button class="refresh-button" onclick="fetchData()">Refresh Data</button>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <div id="dashboard-content">
+            <!-- Overview Section -->
+            <div class="section">
+                <h2 class="section-title">Device Overview</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">System Info</div>
+                        <div class="data-row">
+                            <span class="data-label">Device Name:</span>
+                            <span id="thing-name" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Firmware:</span>
+                            <span id="firmware-version" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">WiFi Signal:</span>
+                            <span id="wifi-signal" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">SSID:</span>
+                            <span id="wifi-ssid" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">IP Address:</span>
+                            <span id="ip-address" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">App Status:</span>
+                            <span id="app-status" class="data-value">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Accessory Info</div>
+                        <div class="data-row">
+                            <span class="data-label">Model:</span>
+                            <span id="accessory-model" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Firmware:</span>
+                            <span id="accessory-firmware" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Mode:</span>
+                            <span id="accessory-mode" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Battery Section -->
+            <div class="section">
+                <h2 class="section-title">Battery Status</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">Battery Status</div>
+                        <div class="data-row">
+                            <span class="data-label">State of Charge:</span>
+                            <span id="battery-soc" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Voltage:</span>
+                            <span id="battery-voltage" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Wh Stored:</span>
+                            <span id="battery-wh-stored" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Temperature:</span>
+                            <span id="battery-temp" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Charging Status:</span>
+                            <span id="battery-charging" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Input Detected:</span>
+                            <span id="battery-input" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Time Remaining:</span>
+                            <span id="battery-time" class="data-value">-</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Power Stats</div>
+                        <div class="data-row">
+                            <span class="data-label">Power In:</span>
+                            <span id="power-in" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current In:</span>
+                            <span id="current-in" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Power Out:</span>
+                            <span id="power-out" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Current Out:</span>
+                            <span id="current-out" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Energy Out (Total):</span>
+                            <span id="energy-out" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ports Section -->
+            <div class="section">
+                <h2 class="section-title">Port Status</h2>
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="card-title">Output Ports</div>
+                        <div class="data-row">
+                            <span class="data-label">12V Port:</span>
+                            <span id="v12-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">USB Port:</span>
+                            <span id="usb-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">AC Port:</span>
+                            <span id="ac-status" class="data-value">-</span>
+                        </div>
+                        <div class="data-row">
+                            <span class="data-label">Backlight:</span>
+                            <span id="backlight-status" class="data-value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="refresh-time">Last updated: <span id="last-updated">Never</span></div>
+    </div>
+
+    <script>
+        // URL for the status endpoint
+        const statusEndpoint = 'http://192.168.8.132/state';
+        
+        // Function to fetch data from the endpoint
+        async function fetchData() {
+            try {
+                const response = await fetch(statusEndpoint);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                updateDashboard(data);
+                
+                // Hide any previous error message
+                document.getElementById('error-message').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+                
+                // Update the last updated time
+                const now = new Date();
+                document.getElementById('last-updated').textContent = now.toLocaleString();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('error-message').textContent = `Failed to fetch data: ${error.message}`;
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }
+        
+        // Function to update the dashboard with the fetched data
+        function updateDashboard(data) {
+            // Update Overview Section - System Info
+            document.getElementById('thing-name').textContent = data.thingName || '-';
+            document.getElementById('firmware-version').textContent = data.firmwareVersion || '-';
+            document.getElementById('wifi-signal').textContent = `${data.wifiStrength} dBm`;
+            document.getElementById('wifi-ssid').textContent = data.ssid || '-';
+            document.getElementById('ip-address').textContent = data.ipAddr || '-';
+            document.getElementById('app-status').innerHTML = getStatusIndicator(data.app_online) + (data.app_online ? 'Connected' : 'Disconnected');
+            
+            // Update Accessory Info
+            if (data.foreignAcsry) {
+                document.getElementById('accessory-model').textContent = data.foreignAcsry.model || '-';
+                document.getElementById('accessory-firmware').textContent = data.foreignAcsry.firmwareVersion || '-';
+                document.getElementById('accessory-mode').textContent = data.foreignAcsry.mode || '0';
+            }
+            
+            // Update Battery Section
+            document.getElementById('battery-soc').textContent = `${data.socPercent}%`;
+            document.getElementById('battery-voltage').textContent = `${data.volts.toFixed(1)} V`;
+            document.getElementById('battery-wh-stored').textContent = `${data.whStored} Wh`;
+            document.getElementById('battery-temp').textContent = `${data.temperature}°C`;
+            document.getElementById('battery-charging').innerHTML = getStatusIndicator(data.isCharging) + (data.isCharging ? 'Charging' : 'Not Charging');
+            document.getElementById('battery-input').innerHTML = getStatusIndicator(data.inputDetected) + (data.inputDetected ? 'Detected' : 'None');
+            
+            // Format time to empty/full
+            const ttef = data.timeToEmptyFull;
+            if (ttef === -1) {
+                document.getElementById('battery-time').textContent = 'Calculating...';
+            } else if (ttef === 0) {
+                document.getElementById('battery-time').textContent = 'N/A';
+            } else {
+                const absMinutes = Math.abs(ttef);
+                const hours = Math.floor(absMinutes / 60);
+                const minutes = absMinutes % 60;
+                const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                
+                if (data.isCharging) {
+                    document.getElementById('battery-time').textContent = `${timeString} to full`;
+                } else {
+                    document.getElementById('battery-time').textContent = `${timeString} to empty`;
+                }
+            }
+            
+            // Update Power Stats
+            document.getElementById('power-in').textContent = `${data.wattsIn} W`;
+            document.getElementById('current-in').textContent = `${data.ampsIn.toFixed(1)} A`;
+            document.getElementById('power-out').textContent = `${data.wattsOut} W`;
+            document.getElementById('current-out').textContent = `${data.ampsOut.toFixed(1)} A`;
+            document.getElementById('energy-out').textContent = `${data.whOut} Wh`;
+            
+            // Update Port Status
+            document.getElementById('v12-status').innerHTML = getStatusIndicator(data.v12PortStatus) + getPortStatusText(data.v12PortStatus);
+            document.getElementById('usb-status').innerHTML = getStatusIndicator(data.usbPortStatus) + getPortStatusText(data.usbPortStatus);
+            document.getElementById('ac-status').innerHTML = getStatusIndicator(data.acPortStatus) + getPortStatusText(data.acPortStatus);
+            document.getElementById('backlight-status').innerHTML = getStatusIndicator(data.backlight) + (data.backlight ? 'ON' : 'OFF');
+        }
+        
+        // Helper function to get status indicator HTML
+        function getStatusIndicator(status) {
+            const statusClass = status ? 'status-on' : 'status-off';
+            return `<span class="status-indicator ${statusClass}"></span>`;
+        }
+        
+        // Helper function to get port status text
+        function getPortStatusText(status) {
+            return status ? 'Active' : 'Inactive';
+        }
+        
+        // Fetch data when page loads
+        document.addEventListener('DOMContentLoaded', fetchData);
+        
+        // Set up auto-refresh every 30 seconds
+        setInterval(fetchData, 30000);
+    </script>
+</body>
+</html>
+
